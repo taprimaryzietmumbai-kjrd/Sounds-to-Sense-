@@ -117,6 +117,7 @@ h1 { margin:7px 0 4px; font-size:clamp(30px,5vw,52px); letter-spacing:.3px; }
   border:0; border-radius:7px; padding:11px 14px; color:#fff; cursor:pointer;
   font-weight:bold; min-height:44px;
 }
+.submit-btn { background:#1f6f43; }
 .save-btn { background:var(--navy); }
 .download-btn { background:var(--blue); }
 .print-btn { background:var(--accent); }
@@ -270,6 +271,7 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
 
   </div>
   <div class="panel-actions">
+    <button type="button" class="submit-btn" data-submit>☁ Submit to Workshop</button>
     <button type="button" class="save-btn" data-save="day1">Save on This Device</button>
     <button type="button" class="download-btn" data-download="day1">Download Responses</button>
     <button type="button" class="print-btn" data-print="day1">Print / Save as PDF</button>
@@ -428,6 +430,7 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
 
   </div>
   <div class="panel-actions">
+    <button type="button" class="submit-btn" data-submit>☁ Submit to Workshop</button>
     <button type="button" class="save-btn" data-save="day2">Save on This Device</button>
     <button type="button" class="download-btn" data-download="day2">Download Responses</button>
     <button type="button" class="print-btn" data-print="day2">Print / Save as PDF</button>
@@ -556,6 +559,7 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
 
   </div>
   <div class="panel-actions">
+    <button type="button" class="submit-btn" data-submit>☁ Submit to Workshop</button>
     <button type="button" class="save-btn" data-save="day3">Save on This Device</button>
     <button type="button" class="download-btn" data-download="day3">Download Responses</button>
     <button type="button" class="print-btn" data-print="day3">Print / Save as PDF</button>
@@ -707,6 +711,7 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
 
   </div>
   <div class="panel-actions">
+    <button type="button" class="submit-btn" data-submit>☁ Submit to Workshop</button>
     <button type="button" class="save-btn" data-save="day4">Save on This Device</button>
     <button type="button" class="download-btn" data-download="day4">Download Responses</button>
     <button type="button" class="print-btn" data-print="day4">Print / Save as PDF</button>
@@ -822,6 +827,7 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
 
   </div>
   <div class="panel-actions">
+    <button type="button" class="submit-btn" data-submit>☁ Submit to Workshop</button>
     <button type="button" class="save-btn" data-save="feedback">Save on This Device</button>
     <button type="button" class="download-btn" data-download="feedback">Download Responses</button>
     <button type="button" class="print-btn" data-print="feedback">Print / Save as PDF</button>
@@ -833,7 +839,13 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
   <footer>FROM SOUNDS TO SENSE • Digital Workshop Forms • All responses are stored locally in the browser unless downloaded by the participant.</footer>
 </div>
 
+
 <script>
+/* ===== Google Sheets submission configuration =====
+   After deploying the companion Google Apps Script as a Web App,
+   paste its /exec URL between the quotes below. */
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPU8YFum47_Yj7RfApqIGKY3ik03x18BV4bbNGQSFurUuQsPnkIskTgmLNy16yVP-j/exec";
+
 (function() {
   const home = document.getElementById('homeView');
   const panels = [...document.querySelectorAll('.portal-panel')];
@@ -929,6 +941,45 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
   document.querySelectorAll('[data-print]').forEach(b => b.addEventListener('click', () => window.print()));
 
   ['day1','day2','day3','day4','feedback'].forEach(restore);
+
+
+  async function submitToWorkshop(key) {
+    const url = (typeof GOOGLE_APPS_SCRIPT_URL === 'string') ? GOOGLE_APPS_SCRIPT_URL.trim() : '';
+    if (!url || url.includes('https://script.google.com/macros/s/AKfycbzPU8YFum47_Yj7RfApqIGKY3ik03x18BV4bbNGQSFurUuQsPnkIskTgmLNy16yVP-j/exec')) {
+      announce(key, 'Submission is not connected yet. Add the Google Apps Script Web App URL first.');
+      return;
+    }
+
+    const data = collect(key);
+    data._form = key;
+    data._submittedFrom = 'Sounds to Sense Digital Portal';
+    const button = panel(key).querySelector('[data-submit]');
+    const original = button ? button.textContent : '';
+    if (button) { button.disabled = true; button.textContent = 'Submitting…'; }
+
+    try {
+      const body = new URLSearchParams();
+      body.set('payload', JSON.stringify(data));
+      await fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+        body: body.toString()
+      });
+      announce(key, '✓ Submitted to the workshop response sheet. You may submit again if needed.');
+    } catch (err) {
+      announce(key, 'Submission could not be sent. Please check your internet connection and try again.');
+    } finally {
+      if (button) { button.disabled = false; button.textContent = original; }
+    }
+  }
+
+  document.querySelectorAll('[data-submit]').forEach(b => {
+    b.addEventListener('click', () => {
+      const p = b.closest('.portal-panel');
+      if (p) submitToWorkshop(p.dataset.key);
+    });
+  });
 
   document.getElementById('makeQR').addEventListener('click', function() {
     const url = document.getElementById('publicUrl').value.trim();
