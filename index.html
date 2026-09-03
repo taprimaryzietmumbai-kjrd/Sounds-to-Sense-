@@ -945,7 +945,7 @@ const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPU8YFu
 
   async function submitToWorkshop(key) {
     const url = (typeof GOOGLE_APPS_SCRIPT_URL === 'string') ? GOOGLE_APPS_SCRIPT_URL.trim() : '';
-    if (!url || url.includes('https://script.google.com/macros/s/AKfycbzPU8YFum47_Yj7RfApqIGKY3ik03x18BV4bbNGQSFurUuQsPnkIskTgmLNy16yVP-j/exec')) {
+    if (!url || !/^https:\/\/script\.google\.com\/macros\/s\/[^\s]+\/exec$/i.test(url)) {
       announce(key, 'Submission is not connected yet. Add the Google Apps Script Web App URL first.');
       return;
     }
