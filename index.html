@@ -122,6 +122,32 @@ h1 { margin:7px 0 4px; font-size:clamp(30px,5vw,52px); letter-spacing:.3px; }
 .download-btn { background:var(--blue); }
 .print-btn { background:var(--accent); }
 .clear-btn { background:#7d3f3f; }
+/* Clear, touch-friendly tick boxes for Day 1 and other checklist items */
+.check {
+  display: block;
+  margin: 7px 0;
+  line-height: 1.35;
+  cursor: pointer;
+}
+.check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0 8px 0 0;
+  vertical-align: -3px;
+  accent-color: #245b82;
+}
+.confidence {
+  display:flex; flex-wrap:wrap; gap:5px; justify-content:center; align-items:center;
+}
+.confidence label {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:30px; min-height:30px; padding:3px 6px;
+  border:1px solid #9aa9b6; border-radius:5px; background:#fff;
+  cursor:pointer; font-weight:600; font-size:13px;
+}
+.confidence label:has(input:checked) { background:#245b82; color:#fff; border-color:#245b82; }
+.confidence input { width:16px; height:16px; margin:0 4px 0 0; }
+
 .status {
   margin-top:10px; min-height:20px; color:var(--muted); font-size:12px;
 }
@@ -233,12 +259,12 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
 
 <div class="sec">1. SKILLS ACQUIRED — WHAT CAN I NOW DO?</div>
 <table><tr><th>Skill</th><th>Skills acquired / strengthened</th><th>Confidence<br>(1–5)</th></tr>
-<tr><td>Listening & Auditory Discrimination</td><td><div class="check"><input type="checkbox" id="s1">Hear and discriminate sounds.</div><div class="check"><input type="checkbox" id="s2">Notice similar / different sounds.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
-<tr><td>Phonological Awareness</td><td><div class="check"><input type="checkbox" id="s3">Notice rhyme, syllables and individual sounds.</div><div class="check"><input type="checkbox" id="s4">Use oral sound activities before print.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
-<tr><td>Letter–Sound Connection</td><td><div class="check"><input type="checkbox" id="s5">Connect spoken sounds with graphemes.</div><div class="check"><input type="checkbox" id="s6">Model sound–symbol correspondence explicitly.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
-<tr><td>Blending</td><td><div class="check"><input type="checkbox" id="s7">Blend sounds orally and with print.</div><div class="check"><input type="checkbox" id="s8">Move towards smooth decoding.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
-<tr><td>Segmenting</td><td><div class="check"><input type="checkbox" id="s9">Break words into phonemes.</div><div class="check"><input type="checkbox" id="s10">Count sounds rather than letters.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
-<tr><td>Decoding & Encoding</td><td><div class="check"><input type="checkbox" id="s11">Decode unfamiliar words systematically.</div><div class="check"><input type="checkbox" id="s12">Connect segmenting to spelling / encoding.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr></table>
+<tr><td>Listening & Auditory Discrimination</td><td><div class="check"><input type="checkbox" id="s1">Hear and discriminate sounds.</div><div class="check"><input type="checkbox" id="s2">Notice similar / different sounds.</div></td><td><div class="confidence"><label><input type="radio" name="c1" value="1">1</label><label><input type="radio" name="c1" value="2">2</label><label><input type="radio" name="c1" value="3">3</label><label><input type="radio" name="c1" value="4">4</label><label><input type="radio" name="c1" value="5">5</label></div></td></tr>
+<tr><td>Phonological Awareness</td><td><div class="check"><input type="checkbox" id="s3">Notice rhyme, syllables and individual sounds.</div><div class="check"><input type="checkbox" id="s4">Use oral sound activities before print.</div></td><td><div class="confidence"><label><input type="radio" name="c2" value="1">1</label><label><input type="radio" name="c2" value="2">2</label><label><input type="radio" name="c2" value="3">3</label><label><input type="radio" name="c2" value="4">4</label><label><input type="radio" name="c2" value="5">5</label></div></td></tr>
+<tr><td>Letter–Sound Connection</td><td><div class="check"><input type="checkbox" id="s5">Connect spoken sounds with graphemes.</div><div class="check"><input type="checkbox" id="s6">Model sound–symbol correspondence explicitly.</div></td><td><div class="confidence"><label><input type="radio" name="c3" value="1">1</label><label><input type="radio" name="c3" value="2">2</label><label><input type="radio" name="c3" value="3">3</label><label><input type="radio" name="c3" value="4">4</label><label><input type="radio" name="c3" value="5">5</label></div></td></tr>
+<tr><td>Blending</td><td><div class="check"><input type="checkbox" id="s7">Blend sounds orally and with print.</div><div class="check"><input type="checkbox" id="s8">Move towards smooth decoding.</div></td><td><div class="confidence"><label><input type="radio" name="c4" value="1">1</label><label><input type="radio" name="c4" value="2">2</label><label><input type="radio" name="c4" value="3">3</label><label><input type="radio" name="c4" value="4">4</label><label><input type="radio" name="c4" value="5">5</label></div></td></tr>
+<tr><td>Segmenting</td><td><div class="check"><input type="checkbox" id="s9">Break words into phonemes.</div><div class="check"><input type="checkbox" id="s10">Count sounds rather than letters.</div></td><td><div class="confidence"><label><input type="radio" name="c5" value="1">1</label><label><input type="radio" name="c5" value="2">2</label><label><input type="radio" name="c5" value="3">3</label><label><input type="radio" name="c5" value="4">4</label><label><input type="radio" name="c5" value="5">5</label></div></td></tr>
+<tr><td>Decoding & Encoding</td><td><div class="check"><input type="checkbox" id="s11">Decode unfamiliar words systematically.</div><div class="check"><input type="checkbox" id="s12">Connect segmenting to spelling / encoding.</div></td><td><div class="confidence"><label><input type="radio" name="c6" value="1">1</label><label><input type="radio" name="c6" value="2">2</label><label><input type="radio" name="c6" value="3">3</label><label><input type="radio" name="c6" value="4">4</label><label><input type="radio" name="c6" value="5">5</label></div></td></tr></table>
 <div class="card"><b>My strongest skill from Day 1:</b><textarea id="strongest"></textarea></div>
 </section>
 
@@ -260,7 +286,14 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px;
 <div class="card"><p style="text-align:center;font-weight:bold">SOUNDS → ________ → WORDS → ________ → READING → ________</p><textarea id="chain" placeholder="Explain how phonics contributes to understanding and communication."></textarea></div>
 <div class="sec">5. WHAT I WILL LOOK FOR IN CHILDREN</div>
 <div class="card">
-<label class="check"><input type="checkbox" id="l1">Can hear and distinguish sounds</label><label class="check"><input type="checkbox" id="l2">Can identify beginning / middle / ending sounds</label><label class="check"><input type="checkbox" id="l3">Can blend sounds to read words</label><label class="check"><input type="checkbox" id="l4">Can segment words for spelling</label><label class="check"><input type="checkbox" id="l5">Uses letter–sound knowledge to decode unfamiliar words</label><label class="check"><input type="checkbox" id="l6">Rereads decoded text for fluency</label><label class="check"><input type="checkbox" id="l7">Can explain the meaning of what was read</label><label class="check"><input type="checkbox" id="l8">Can connect new words / ideas with prior knowledge</label>
+<label class="check"><input type="checkbox" id="l1">Can hear and distinguish sounds</label>
+<label class="check"><input type="checkbox" id="l2">Can identify beginning / middle / ending sounds</label>
+<label class="check"><input type="checkbox" id="l3">Can blend sounds to read words</label>
+<label class="check"><input type="checkbox" id="l4">Can segment words for spelling</label>
+<label class="check"><input type="checkbox" id="l5">Uses letter–sound knowledge to decode unfamiliar words</label>
+<label class="check"><input type="checkbox" id="l6">Rereads decoded text for fluency</label>
+<label class="check"><input type="checkbox" id="l7">Can explain the meaning of what was read</label>
+<label class="check"><input type="checkbox" id="l8">Can connect new words / ideas with prior knowledge</label>
 </div>
 <div class="sec">6. FINAL REFLECTION</div>
 <div class="card big"><b>The most important insight I am taking from Day 1 is...</b><textarea id="insight"></textarea></div>
@@ -879,8 +912,10 @@ const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPU8YFu
     const data = {};
     fieldsFor(key).forEach((el, i) => {
       const id = el.name || el.id || ('field_' + i);
-      if (el.type === 'checkbox' || el.type === 'radio') data[id] = el.checked;
-      else data[id] = el.value;
+      if (el.type === 'checkbox') data[id] = el.checked;
+      else if (el.type === 'radio') {
+        if (el.checked) data[id] = el.value;
+      } else data[id] = el.value;
     });
     return data;
   }
@@ -892,7 +927,8 @@ const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPU8YFu
       fieldsFor(key).forEach((el, i) => {
         const id = el.name || el.id || ('field_' + i);
         if (!(id in data)) return;
-        if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!data[id];
+        if (el.type === 'checkbox') el.checked = !!data[id];
+        else if (el.type === 'radio') el.checked = String(data[id]) === String(el.value);
         else el.value = data[id];
       });
     } catch(e) {}
