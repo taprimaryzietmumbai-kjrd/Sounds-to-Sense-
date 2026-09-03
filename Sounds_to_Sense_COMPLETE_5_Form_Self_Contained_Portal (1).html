@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FROM SOUNDS TO SENSE — Digital Workshop Forms</title>
+<style>
+:root {
+  --navy:#17365d; --blue:#245b82; --accent:#2f718f; --sky:#edf7fb;
+  --ink:#17212b; --muted:#596773; --line:#cbd7df; --paper:#fff;
+  --bg:#edf3f7; --soft:#f6f9fb;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif; line-height:1.45;
+}
+.topbar {
+  background:var(--navy); color:#fff; padding:30px 18px 28px; text-align:center;
+}
+.brand { max-width:1100px; margin:auto; }
+.eyebrow { font-size:12px; letter-spacing:2px; font-weight:bold; opacity:.9; }
+h1 { margin:7px 0 4px; font-size:clamp(30px,5vw,52px); letter-spacing:.3px; }
+.tagline { font-size:18px; font-style:italic; }
+.journey {
+  display:inline-block; margin-top:16px; padding:9px 15px;
+  border:1px solid rgba(255,255,255,.4); border-radius:999px;
+  background:rgba(255,255,255,.1); font-weight:bold; font-size:13px;
+}
+.wrap { max-width:1100px; margin:auto; padding:24px 16px 50px; }
+#homeView { display:block; }
+.welcome {
+  background:var(--paper); border:1px solid var(--line); border-radius:15px;
+  padding:20px; margin-bottom:18px;
+}
+.welcome strong { color:var(--navy); }
+.form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.form-card {
+  background:var(--paper); border:1px solid var(--line); border-radius:15px;
+  padding:20px; display:flex; gap:15px; min-width:0;
+}
+.form-number {
+  width:46px; height:46px; border-radius:50%; background:var(--sky);
+  color:var(--navy); display:grid; place-items:center; font-weight:bold; flex:0 0 46px;
+}
+.form-card h2 { color:var(--navy); margin:4px 0 3px; font-size:21px; }
+.form-card .kicker { color:var(--accent); font-size:10px; letter-spacing:1.5px; font-weight:bold; }
+.form-card p { color:var(--muted); font-size:14px; margin:5px 0 15px; }
+.open-form {
+  border:0; border-radius:8px; background:var(--navy); color:white;
+  padding:11px 15px; font-weight:bold; cursor:pointer; min-height:44px;
+}
+.open-form:hover { background:var(--blue); }
+.qr-box {
+  margin-top:18px; background:var(--paper); border:2px dashed var(--accent);
+  border-radius:15px; padding:20px; display:grid; grid-template-columns:1fr 280px;
+  gap:22px; align-items:center;
+}
+.qr-box h2 { color:var(--navy); margin:0 0 6px; }
+.qr-box p { margin:5px 0; color:var(--muted); font-size:14px; }
+.qr-input { display:flex; gap:8px; margin-top:12px; }
+.qr-input input {
+  min-width:0; flex:1; padding:11px; border:1px solid var(--line);
+  border-radius:7px; font-size:14px;
+}
+.qr-input button {
+  border:0; border-radius:7px; padding:11px 14px; background:var(--navy);
+  color:#fff; font-weight:bold; cursor:pointer;
+}
+#qrPreview {
+  min-height:210px; display:grid; place-items:center; border:1px solid var(--line);
+  border-radius:12px; background:var(--soft); padding:15px; text-align:center; color:var(--muted);
+}
+#qrPreview img { width:190px; height:190px; }
+.portal-panel {
+  display:none; background:var(--paper); border-radius:15px; border:1px solid var(--line);
+  padding:20px; overflow:hidden;
+}
+.portal-panel.active { display:block; }
+.panel-top {
+  display:flex; justify-content:space-between; gap:15px; align-items:flex-start;
+  border-bottom:1px solid var(--line); padding-bottom:13px;
+}
+.kicker { color:var(--accent); font-size:11px; letter-spacing:1.6px; font-weight:bold; }
+.panel-top h2 { margin:3px 0; color:var(--navy); font-size:28px; }
+.panel-subtitle { margin:0; color:var(--muted); font-style:italic; }
+.home-btn {
+  border:1px solid var(--navy); background:#fff; color:var(--navy);
+  border-radius:7px; padding:10px 13px; cursor:pointer; font-weight:bold; min-height:44px;
+}
+.portal-pathway {
+  margin:14px 0; padding:10px 12px; text-align:center; background:var(--sky);
+  border:1px solid #a9c7d5; border-radius:8px; font-weight:bold; color:var(--navy);
+}
+.embedded-form { overflow-x:auto; }
+/* Harmonize embedded source forms inside the single portal. */
+.embedded-form .page {
+  width:auto; min-height:0; margin:0; padding:14px 2px 20px;
+  box-shadow:none; background:#fff; page-break-after:auto;
+}
+.embedded-form .page + .page { border-top:2px solid var(--line); margin-top:10px; }
+.embedded-form .footer { position:static; margin-top:12px; }
+.embedded-form h1 { color:var(--navy); font-size:25px; }
+.embedded-form h2 { color:var(--blue); }
+.embedded-form h3 { color:var(--navy); }
+.embedded-form input, .embedded-form textarea, .embedded-form select {
+  font-family:inherit; font-size:14px; max-width:100%;
+}
+.embedded-form textarea { min-height:65px; }
+.embedded-form table { min-width:650px; }
+.panel-actions {
+  display:flex; flex-wrap:wrap; gap:8px; border-top:1px solid var(--line);
+  padding-top:16px; margin-top:8px;
+}
+.panel-actions button {
+  border:0; border-radius:7px; padding:11px 14px; color:#fff; cursor:pointer;
+  font-weight:bold; min-height:44px;
+}
+.save-btn { background:var(--navy); }
+.download-btn { background:var(--blue); }
+.print-btn { background:var(--accent); }
+.clear-btn { background:#7d3f3f; }
+.status {
+  margin-top:10px; min-height:20px; color:var(--muted); font-size:12px;
+}
+footer { text-align:center; color:var(--muted); font-size:12px; margin-top:22px; }
+@media(max-width:760px) {
+  .form-grid, .qr-box { grid-template-columns:1fr; }
+  .panel-top { flex-direction:column; }
+  .home-btn { width:100%; }
+  .embedded-form .grid2 { grid-template-columns:1fr; }
+}
+@media print {
+  body { background:white; }
+  .topbar, #homeView, .panel-top .home-btn, .panel-actions, footer { display:none !important; }
+  .portal-panel.active { display:block; border:0; padding:0; }
+  .embedded-form .page { display:block; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="eyebrow">KENDRIYA VIDYALAYA SANGATHAN • ZIET MUMBAI</div>
+    <h1>FROM SOUNDS TO SENSE</h1>
+    <div class="tagline">Strengthening Language Acquisition through Phonics and Meaning Making</div>
+    <div class="journey">SOUNDS → WORDS → MEANING → TEXT → THINKING → EXPRESSION</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <main id="homeView">
+    <section class="welcome">
+      <strong>Welcome to the Digital Workshop Forms</strong><br>
+      Select any form below. Everything is contained in this <b>single HTML file</b> — no separate
+      form files are required for the buttons to work.
+    </section>
+
+    <section class="form-grid">
+      <article class="form-card">
+        <div class="form-number">1</div><div>
+          <div class="kicker">DAY 1</div><h2>LISTEN &amp; NOTICE</h2>
+          <p>From Listening to Sounds — hear, notice, identify, connect, blend, segment, decode, encode, read and understand.</p>
+          <button class="open-form" data-open="day1">Open Day 1 Form →</button>
+        </div>
+      </article>
+      <article class="form-card">
+        <div class="form-number">2</div><div>
+          <div class="kicker">DAY 2</div><h2>CONNECT &amp; CODE</h2>
+          <p>From Sounds to Print / Symbols — sounds, symbols, words, word parts, meaning and use.</p>
+          <button class="open-form" data-open="day2">Open Day 2 Form →</button>
+        </div>
+      </article>
+      <article class="form-card">
+        <div class="form-number">3</div><div>
+          <div class="kicker">DAY 3</div><h2>READ &amp; UNDERSTAND</h2>
+          <p>From Sense to Expression — predict, connect, question, infer, interpret, summarise and respond.</p>
+          <button class="open-form" data-open="day3">Open Day 3 Form →</button>
+        </div>
+      </article>
+      <article class="form-card">
+        <div class="form-number">4</div><div>
+          <div class="kicker">DAY 4</div><h2>EXPRESS &amp; ASSESS</h2>
+          <p>From Meaning to Expression — structured literacy, inclusion, comprehension, critical thinking and assessment for learning.</p>
+          <button class="open-form" data-open="day4">Open Day 4 Form →</button>
+        </div>
+      </article>
+      <article class="form-card">
+        <div class="form-number">5</div><div>
+          <div class="kicker">WORKSHOP</div><h2>GENERAL FEEDBACK</h2>
+          <p>Share ratings, suggestions and comments on the course, arrangements, pace, content and support.</p>
+          <button class="open-form" data-open="feedback">Open Feedback Form →</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="qr-box">
+      <div>
+        <div class="kicker">QR-READY</div>
+        <h2>One QR Code for the Complete Portal</h2>
+        <p>Once this single HTML file is hosted publicly, paste its public <b>https://</b> address below.
+        The generated QR will take participants to this portal, where all five forms are available.</p>
+        <div class="qr-input">
+          <input id="publicUrl" type="url" placeholder="Paste the public landing-page URL here">
+          <button type="button" id="makeQR">Generate QR</button>
+        </div>
+        <div class="status" id="qrStatus"></div>
+      </div>
+      <div id="qrPreview">QR preview will appear here after a public URL is entered.</div>
+    </section>
+  </main>
+
+  
+<section class="portal-panel" id="panel-day1" data-key="day1" aria-labelledby="title-day1">
+  <div class="panel-top">
+    <div>
+      <div class="kicker">DAY 1</div>
+      <h2 id="title-day1">LISTEN & NOTICE</h2>
+      <p class="panel-subtitle">From Listening to Sounds</p>
+    </div>
+    <button type="button" class="home-btn" data-home>← Back to Forms</button>
+  </div>
+  <div class="portal-pathway">Hear → Notice → Identify → Connect → Blend → Segment → Decode → Encode → Read → Understand</div>
+  <div class="embedded-form">
+    <section class="page"><header><div><b>DAY 1 — LISTEN & NOTICE</b></div><h1>FROM LISTENING TO SOUNDS</h1><p>Sounds-to-Sense Journey • Participant Reflection & Classroom Bridge</p></header>
+<div class="path">HEAR → NOTICE → IDENTIFY → CONNECT → BLEND → SEGMENT → DECODE → ENCODE → READ → UNDERSTAND</div>
+<div class="meta">
+<div class="field"><label>Participant Name</label><input id="name"></div><div class="field"><label>School / KV</label><input id="school"></div>
+<div class="field"><label>Designation</label><input id="designation"></div><div class="field"><label>Class / Grade Taught</label><input id="grade"></div>
+<div class="field full"><label>Date / Session</label><input id="date"></div></div>
+
+<div class="sec">1. SKILLS ACQUIRED — WHAT CAN I NOW DO?</div>
+<table><tr><th>Skill</th><th>Skills acquired / strengthened</th><th>Confidence<br>(1–5)</th></tr>
+<tr><td>Listening & Auditory Discrimination</td><td><div class="check"><input type="checkbox" id="s1">Hear and discriminate sounds.</div><div class="check"><input type="checkbox" id="s2">Notice similar / different sounds.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
+<tr><td>Phonological Awareness</td><td><div class="check"><input type="checkbox" id="s3">Notice rhyme, syllables and individual sounds.</div><div class="check"><input type="checkbox" id="s4">Use oral sound activities before print.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
+<tr><td>Letter–Sound Connection</td><td><div class="check"><input type="checkbox" id="s5">Connect spoken sounds with graphemes.</div><div class="check"><input type="checkbox" id="s6">Model sound–symbol correspondence explicitly.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
+<tr><td>Blending</td><td><div class="check"><input type="checkbox" id="s7">Blend sounds orally and with print.</div><div class="check"><input type="checkbox" id="s8">Move towards smooth decoding.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
+<tr><td>Segmenting</td><td><div class="check"><input type="checkbox" id="s9">Break words into phonemes.</div><div class="check"><input type="checkbox" id="s10">Count sounds rather than letters.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr>
+<tr><td>Decoding & Encoding</td><td><div class="check"><input type="checkbox" id="s11">Decode unfamiliar words systematically.</div><div class="check"><input type="checkbox" id="s12">Connect segmenting to spelling / encoding.</div></td><td><div class="rate">1 2 3 4 5</div></td></tr></table>
+<div class="card"><b>My strongest skill from Day 1:</b><textarea id="strongest"></textarea></div>
+</section>
+
+<section class="page"><header><div><b>DAY 1 — LISTEN & NOTICE</b></div><h1>FROM SKILLS TO CLASSROOM PRACTICE</h1><p>Further Classroom Implications</p></header>
+<div class="sec">2. FURTHER CLASSROOM IMPLICATION — WHAT WILL I CHANGE?</div>
+<div class="card"><h3>A. Listening before reading</h3><p>Create opportunities to <b>hear, discriminate and manipulate sounds orally before showing the written form.</b></p><textarea id="a"></textarea></div>
+<div class="card"><h3>B. Make sound–symbol relationships explicit</h3><p>Prompt children to <b>look at letters, say sounds, blend and check meaning</b> rather than guess from pictures.</p><textarea id="b"></textarea></div>
+<div class="card"><h3>C. Build blending and segmenting into daily practice</h3><p>Use short, purposeful routines for <b>blending, segmenting, decoding and encoding</b>.</p><textarea id="c"></textarea></div>
+<div class="card"><h3>D. Move from decoding to meaning</h3><p>After decoding, ask children to <b>reread, explain, connect and use</b> the word or sentence.</p><textarea id="d"></textarea></div>
+<div class="card"><h3>E. Differentiate support</h3><p>Identify whether difficulty occurs in <b>hearing, identifying, blending, segmenting, decoding, encoding or understanding</b>.</p><textarea id="e"></textarea></div>
+<div class="sec">3. MY CLASSROOM COMMITMENT</div>
+<div class="card"><b>One specific change I will implement:</b><textarea id="commit"></textarea></div>
+<div class="card"><b>One practice I will stop / reduce:</b><textarea id="stop"></textarea></div>
+<div class="card"><b>One practice I will start / strengthen:</b><textarea id="start"></textarea></div>
+</section>
+
+<section class="page"><header><div><b>DAY 1 — LISTEN & NOTICE</b></div><h1>REFLECT → APPLY → CONNECT</h1><p>From Sounds to Sense: My Day 1 Learning Record</p></header>
+<div class="sec">4. FROM SOUNDS TO SENSE — MY UNDERSTANDING</div>
+<div class="card"><p style="text-align:center;font-weight:bold">SOUNDS → ________ → WORDS → ________ → READING → ________</p><textarea id="chain" placeholder="Explain how phonics contributes to understanding and communication."></textarea></div>
+<div class="sec">5. WHAT I WILL LOOK FOR IN CHILDREN</div>
+<div class="card">
+<label class="check"><input type="checkbox" id="l1">Can hear and distinguish sounds</label><label class="check"><input type="checkbox" id="l2">Can identify beginning / middle / ending sounds</label><label class="check"><input type="checkbox" id="l3">Can blend sounds to read words</label><label class="check"><input type="checkbox" id="l4">Can segment words for spelling</label><label class="check"><input type="checkbox" id="l5">Uses letter–sound knowledge to decode unfamiliar words</label><label class="check"><input type="checkbox" id="l6">Rereads decoded text for fluency</label><label class="check"><input type="checkbox" id="l7">Can explain the meaning of what was read</label><label class="check"><input type="checkbox" id="l8">Can connect new words / ideas with prior knowledge</label>
+</div>
+<div class="sec">6. FINAL REFLECTION</div>
+<div class="card big"><b>The most important insight I am taking from Day 1 is...</b><textarea id="insight"></textarea></div>
+<div class="card"><b>What support / resource do I need to implement this effectively?</b><textarea id="support"></textarea></div>
+<div class="buttons"><button class="p" onclick="save()">Save on This Device</button><button class="s" onclick="download()">Download Responses</button><button class="s" onclick="print()">Print / Save as PDF</button><button class="d" onclick="clearAll()">Clear Form</button></div><div id="status" class="status"></div><div class="note">Responses are stored locally in this browser when saved; they are not automatically submitted online.</div>
+</section>
+
+
+  </div>
+  <div class="panel-actions">
+    <button type="button" class="save-btn" data-save="day1">Save on This Device</button>
+    <button type="button" class="download-btn" data-download="day1">Download Responses</button>
+    <button type="button" class="print-btn" data-print="day1">Print / Save as PDF</button>
+    <button type="button" class="clear-btn" data-clear="day1">Clear This Form</button>
+  </div>
+</section>
+
+<section class="portal-panel" id="panel-day2" data-key="day2" aria-labelledby="title-day2">
+  <div class="panel-top">
+    <div>
+      <div class="kicker">DAY 2</div>
+      <h2 id="title-day2">CONNECT & CODE</h2>
+      <p class="panel-subtitle">From Sounds to Print / Symbols</p>
+    </div>
+    <button type="button" class="home-btn" data-home>← Back to Forms</button>
+  </div>
+  <div class="portal-pathway">Sounds → Symbols → Words → Word Parts → Meaning → Use</div>
+  <div class="embedded-form">
+    <section class="page">
+<header>
+<div class="day">DAY 2 — CONNECT &amp; CODE</div>
+<h1>FROM SOUNDS TO PRINT / SYMBOLS</h1>
+<p>Sounds-to-Sense Journey • Participant Reflection &amp; Classroom Bridge</p>
+</header>
+
+<div class="path">SOUNDS → SYMBOLS → WORDS → WORD PARTS → MEANING → USE</div>
+
+<div class="meta">
+<div class="field"><label>Participant Name</label><input id="name"></div>
+<div class="field"><label>School / KV</label><input id="school"></div>
+<div class="field"><label>Designation</label><input id="designation"></div>
+<div class="field"><label>Class / Grade Taught</label><input id="grade"></div>
+<div class="field full"><label>Date / Session</label><input id="date"></div>
+</div>
+
+<div class="sec">1. SKILLS ACQUIRED — WHAT HAVE I STRENGTHENED?</div>
+<table>
+<tr><th>Skill / Understanding</th><th>Skills acquired / strengthened</th><th>Confidence<br>(1–5)</th></tr>
+<tr><td>Sound–Symbol Connection</td><td>
+<label class="check"><input type="checkbox" id="s1">Connect spoken sounds to letters / symbols.</label>
+<label class="check"><input type="checkbox" id="s2">Model the sound–symbol relationship explicitly.</label>
+</td><td><div class="rate"><label><input type="radio" name="r1" value="1">1</label><label><input type="radio" name="r1" value="2">2</label><label><input type="radio" name="r1" value="3">3</label><label><input type="radio" name="r1" value="4">4</label><label><input type="radio" name="r1" value="5">5</label></div></td></tr>
+<tr><td>Word Families &amp; Patterns</td><td>
+<label class="check"><input type="checkbox" id="s3">Use shared patterns to connect related words.</label>
+<label class="check"><input type="checkbox" id="s4">Help learners notice patterns rather than memorise lists.</label>
+</td><td><div class="rate"><label><input type="radio" name="r2" value="1">1</label><label><input type="radio" name="r2" value="2">2</label><label><input type="radio" name="r2" value="3">3</label><label><input type="radio" name="r2" value="4">4</label><label><input type="radio" name="r2" value="5">5</label></div></td></tr>
+<tr><td>Morphology &amp; Word Parts</td><td>
+<label class="check"><input type="checkbox" id="s5">Notice prefixes, suffixes, roots and meaningful word parts.</label>
+<label class="check"><input type="checkbox" id="s6">Use word structure to support meaning and spelling.</label>
+</td><td><div class="rate"><label><input type="radio" name="r3" value="1">1</label><label><input type="radio" name="r3" value="2">2</label><label><input type="radio" name="r3" value="3">3</label><label><input type="radio" name="r3" value="4">4</label><label><input type="radio" name="r3" value="5">5</label></div></td></tr>
+<tr><td>Vocabulary in Context</td><td>
+<label class="check"><input type="checkbox" id="s7">Infer and confirm word meaning from context.</label>
+<label class="check"><input type="checkbox" id="s8">Connect new words with prior knowledge and experience.</label>
+</td><td><div class="rate"><label><input type="radio" name="r4" value="1">1</label><label><input type="radio" name="r4" value="2">2</label><label><input type="radio" name="r4" value="3">3</label><label><input type="radio" name="r4" value="4">4</label><label><input type="radio" name="r4" value="5">5</label></div></td></tr>
+<tr><td>Word Consciousness</td><td>
+<label class="check"><input type="checkbox" id="s9">Create curiosity about words and how they work.</label>
+<label class="check"><input type="checkbox" id="s10">Encourage learners to notice, collect and use interesting words.</label>
+</td><td><div class="rate"><label><input type="radio" name="r5" value="1">1</label><label><input type="radio" name="r5" value="2">2</label><label><input type="radio" name="r5" value="3">3</label><label><input type="radio" name="r5" value="4">4</label><label><input type="radio" name="r5" value="5">5</label></div></td></tr>
+<tr><td>Oral Language &amp; Interaction</td><td>
+<label class="check"><input type="checkbox" id="s11">Use TALK → LISTEN → THINK → RESPOND routines.</label>
+<label class="check"><input type="checkbox" id="s12">Use drama, role play and discussion to deepen language.</label>
+</td><td><div class="rate"><label><input type="radio" name="r6" value="1">1</label><label><input type="radio" name="r6" value="2">2</label><label><input type="radio" name="r6" value="3">3</label><label><input type="radio" name="r6" value="4">4</label><label><input type="radio" name="r6" value="5">5</label></div></td></tr>
+</table>
+
+<div class="card"><div class="prompt">My strongest learning from Day 2 is...</div><textarea id="strongest"></textarea></div>
+</section>
+
+<section class="page">
+<header>
+<div class="day">DAY 2 — CONNECT &amp; CODE</div>
+<h1>FROM WORD KNOWLEDGE TO MEANINGFUL USE</h1>
+<p>Further Classroom Implications</p>
+</header>
+
+<div class="sec">2. FURTHER CLASSROOM IMPLICATION — WHAT WILL I DO DIFFERENTLY?</div>
+
+<div class="card"><h3>A. Teach words as connected networks</h3>
+<p>Move beyond isolated vocabulary lists. Help children connect a new word to <b>word families, synonyms, antonyms, related concepts, morphology and examples.</b></p>
+<textarea id="a" placeholder="How will I build word connections in my classroom?"></textarea></div>
+
+<div class="card"><h3>B. Make morphology visible</h3>
+<p>Use meaningful word parts to help learners unlock unfamiliar words, spelling patterns and related vocabulary.</p>
+<textarea id="b" placeholder="Which prefixes, suffixes, roots or word families could I explore?"></textarea></div>
+
+<div class="card"><h3>C. Build contextual vocabulary</h3>
+<p>Introduce words in meaningful contexts, revisit them across texts and situations, and ask learners to <b>explain, compare, choose and use</b> them.</p>
+<textarea id="c" placeholder="How will I move from knowing a word to using it?"></textarea></div>
+
+<div class="card"><h3>D. Develop word consciousness</h3>
+<p>Create a classroom where children notice words, ask about words, collect words, play with words and become curious about how language works.</p>
+<textarea id="d" placeholder="My idea for a Word Wall / Word Detective / Word of the Day / Word Collector..."></textarea></div>
+
+<div class="card"><h3>E. Strengthen oral language through interaction</h3>
+<p>Use <b>TALK → LISTEN → THINK → RESPOND</b> through pair talk, discussion, drama, role play, questioning and purposeful response.</p>
+<textarea id="e" placeholder="Which oral-language routine will I introduce or strengthen?"></textarea></div>
+
+<div class="sec">3. MY CLASSROOM COMMITMENT</div>
+<div class="card"><b>One vocabulary practice I will start / strengthen:</b><textarea id="commit"></textarea></div>
+<div class="card"><b>One practice I will stop / reduce:</b><textarea id="stop"></textarea></div>
+<div class="card"><b>One interaction / oral-language strategy I will implement:</b><textarea id="start"></textarea></div>
+</section>
+
+<section class="page">
+<header>
+<div class="day">DAY 2 — CONNECT &amp; CODE</div>
+<h1>REFLECT → APPLY → USE</h1>
+<p>From Sounds to Print / Symbols • Day 2 Learning Record</p>
+</header>
+
+<div class="sec">4. FROM SOUND TO MEANING — MY UNDERSTANDING</div>
+<div class="card">
+<p style="text-align:center;font-weight:bold;font-size:13pt">SOUNDS → SYMBOLS → WORDS → WORD PARTS → MEANING → USE</p>
+<textarea id="chain" placeholder="Explain how this pathway helps a child move from hearing a word to understanding and using it."></textarea>
+</div>
+
+<div class="sec">5. TALK → LISTEN → THINK → RESPOND</div>
+<div class="card">
+<label class="check"><input type="checkbox" id="l1">I will provide regular opportunities for children to TALK.</label>
+<label class="check"><input type="checkbox" id="l2">I will teach children to LISTEN to peers and build on their ideas.</label>
+<label class="check"><input type="checkbox" id="l3">I will give THINK time before expecting a response.</label>
+<label class="check"><input type="checkbox" id="l4">I will expect children to RESPOND with reasons, examples or connections.</label>
+<label class="check"><input type="checkbox" id="l5">I will use pair / group interaction rather than teacher-only talk.</label>
+<label class="check"><input type="checkbox" id="l6">I will use drama / role play to make vocabulary meaningful.</label>
+</div>
+
+<div class="sec">6. MY WORD WORK PLAN</div>
+<div class="card">
+<div class="prompt">A word / word family / morphology pattern I want to take into my classroom:</div>
+<textarea id="wordPlan"></textarea>
+</div>
+<div class="card">
+<div class="prompt">How will children encounter, discuss and use these words in context?</div>
+<textarea id="usePlan"></textarea>
+</div>
+
+<div class="sec">7. FINAL REFLECTION</div>
+<div class="card big">
+<div class="prompt">The most important insight I am taking from Day 2 is...</div>
+<textarea id="insight"></textarea>
+</div>
+<div class="card">
+<div class="prompt">What support / resource do I need to implement this effectively?</div>
+<textarea id="support"></textarea>
+</div>
+
+<div class="buttons">
+<button class="p" onclick="saveForm()">Save on This Device</button>
+<button class="s" onclick="downloadResponses()">Download Responses</button>
+<button class="s" onclick="window.print()">Print / Save as PDF</button>
+<button class="d" onclick="clearForm()">Clear Form</button>
+</div>
+<div id="status" class="status"></div>
+<div class="note">Responses are saved locally in this browser when you choose “Save on This Device”. They are not automatically submitted online.</div>
+</section>
+
+
+  </div>
+  <div class="panel-actions">
+    <button type="button" class="save-btn" data-save="day2">Save on This Device</button>
+    <button type="button" class="download-btn" data-download="day2">Download Responses</button>
+    <button type="button" class="print-btn" data-print="day2">Print / Save as PDF</button>
+    <button type="button" class="clear-btn" data-clear="day2">Clear This Form</button>
+  </div>
+</section>
+
+<section class="portal-panel" id="panel-day3" data-key="day3" aria-labelledby="title-day3">
+  <div class="panel-top">
+    <div>
+      <div class="kicker">DAY 3</div>
+      <h2 id="title-day3">READ & UNDERSTAND</h2>
+      <p class="panel-subtitle">From Sense to Expression</p>
+    </div>
+    <button type="button" class="home-btn" data-home>← Back to Forms</button>
+  </div>
+  <div class="portal-pathway">Predict → Connect → Question → Infer → Interpret → Summarise → Respond</div>
+  <div class="embedded-form">
+    <section class="page">
+<header>
+<div class="day">DAY 3 — READ &amp; UNDERSTAND</div>
+<h1>FROM SENSE TO EXPRESSION</h1>
+<p>Sounds-to-Sense Journey • Participant Reflection &amp; Classroom Bridge</p>
+</header>
+
+<div class="path">PREDICT → CONNECT → QUESTION → INFER → INTERPRET → SUMMARISE → RESPOND</div>
+
+<div class="meta">
+<div class="field"><label>Participant Name</label><input id="name"></div>
+<div class="field"><label>School / KV</label><input id="school"></div>
+<div class="field"><label>Designation</label><input id="designation"></div>
+<div class="field"><label>Class / Grade Taught</label><input id="grade"></div>
+<div class="field full"><label>Date / Session</label><input id="date"></div>
+</div>
+
+<div class="quote">From “Can the child read the words?” → “What can the child understand, connect, infer and express?”</div>
+
+<div class="sec">1. SKILLS ACQUIRED — WHAT HAVE I STRENGTHENED?</div>
+<table>
+<tr><th>Skill / Understanding</th><th>Skills acquired / strengthened</th><th>Confidence<br>(1–5)</th></tr>
+<tr><td>Predict</td><td>
+<label class="check"><input type="checkbox" id="s1">Use title, picture, heading or prior knowledge to anticipate meaning.</label>
+<label class="check"><input type="checkbox" id="s2">Encourage children to revise predictions while reading.</label>
+</td><td><div class="rate"><label><input type="radio" name="r1" value="1">1</label><label><input type="radio" name="r1" value="2">2</label><label><input type="radio" name="r1" value="3">3</label><label><input type="radio" name="r1" value="4">4</label><label><input type="radio" name="r1" value="5">5</label></div></td></tr>
+<tr><td>Connect</td><td>
+<label class="check"><input type="checkbox" id="s3">Connect text with prior knowledge, experience and other texts.</label>
+<label class="check"><input type="checkbox" id="s4">Help children make text-to-self, text-to-text and text-to-world connections.</label>
+</td><td><div class="rate"><label><input type="radio" name="r2" value="1">1</label><label><input type="radio" name="r2" value="2">2</label><label><input type="radio" name="r2" value="3">3</label><label><input type="radio" name="r2" value="4">4</label><label><input type="radio" name="r2" value="5">5</label></div></td></tr>
+<tr><td>Question</td><td>
+<label class="check"><input type="checkbox" id="s5">Generate questions before, during and after reading.</label>
+<label class="check"><input type="checkbox" id="s6">Move beyond recall towards why / how / what-if questions.</label>
+</td><td><div class="rate"><label><input type="radio" name="r3" value="1">1</label><label><input type="radio" name="r3" value="2">2</label><label><input type="radio" name="r3" value="3">3</label><label><input type="radio" name="r3" value="4">4</label><label><input type="radio" name="r3" value="5">5</label></div></td></tr>
+<tr><td>Infer</td><td>
+<label class="check"><input type="checkbox" id="s7">Combine clues from the text with prior knowledge.</label>
+<label class="check"><input type="checkbox" id="s8">Teach children to support inferences with evidence.</label>
+</td><td><div class="rate"><label><input type="radio" name="r4" value="1">1</label><label><input type="radio" name="r4" value="2">2</label><label><input type="radio" name="r4" value="3">3</label><label><input type="radio" name="r4" value="4">4</label><label><input type="radio" name="r4" value="5">5</label></div></td></tr>
+<tr><td>Interpret &amp; Summarise</td><td>
+<label class="check"><input type="checkbox" id="s9">Identify important ideas and distinguish them from details.</label>
+<label class="check"><input type="checkbox" id="s10">Help learners explain a text in their own words.</label>
+</td><td><div class="rate"><label><input type="radio" name="r5" value="1">1</label><label><input type="radio" name="r5" value="2">2</label><label><input type="radio" name="r5" value="3">3</label><label><input type="radio" name="r5" value="4">4</label><label><input type="radio" name="r5" value="5">5</label></div></td></tr>
+<tr><td>Respond &amp; Express</td><td>
+<label class="check"><input type="checkbox" id="s11">Use speaking and writing to demonstrate understanding.</label>
+<label class="check"><input type="checkbox" id="s12">Encourage evidence-based, personal and creative responses.</label>
+</td><td><div class="rate"><label><input type="radio" name="r6" value="1">1</label><label><input type="radio" name="r6" value="2">2</label><label><input type="radio" name="r6" value="3">3</label><label><input type="radio" name="r6" value="4">4</label><label><input type="radio" name="r6" value="5">5</label></div></td></tr>
+</table>
+<div class="card"><div><b>My strongest learning from Day 3 is...</b></div><textarea id="strongest"></textarea></div>
+</section>
+
+<section class="page">
+<header><div class="day">DAY 3 — READ &amp; UNDERSTAND</div><h1>FROM READING TO MEANING-MAKING</h1><p>Further Classroom Implications</p></header>
+
+<div class="sec">2. FURTHER CLASSROOM IMPLICATION — WHAT WILL I DO DIFFERENTLY?</div>
+<div class="card"><h3>A. Make reading an active thinking process</h3><p>Reading should involve purposeful thinking before, during and after the text — not simply reading aloud and answering questions.</p><textarea id="a" placeholder="How will I make thinking visible before, during and after reading?"></textarea></div>
+<div class="card"><h3>B. Use quality children's literature</h3><p>Use picture books, stories, storytelling and read-alouds to develop vocabulary, imagination, comprehension, discussion and reading for pleasure.</p><textarea id="b" placeholder="Which book / story / picture book could I use, and what could children think about?"></textarea></div>
+<div class="card"><h3>C. Teach comprehension explicitly</h3><p>Model and scaffold <b>PREDICT → CONNECT → QUESTION → INFER → INTERPRET → SUMMARISE → RESPOND</b> rather than assuming comprehension happens automatically.</p><textarea id="c" placeholder="Which comprehension strategy will I model explicitly?"></textarea></div>
+<div class="card"><h3>D. Strengthen listening, speaking, reading and writing together</h3><p>Give children opportunities to talk about a text, listen to others, formulate ideas, read for evidence and write or speak a response.</p><textarea id="d" placeholder="How will I connect the four language modes in one lesson?"></textarea></div>
+<div class="card"><h3>E. Extend reading across the curriculum</h3><p>Help children read to learn in <b>Gardening, Mathematics, TWAU, WE</b> and other learning areas — using text, diagrams, instructions, problems, explanations and informational sources.</p><textarea id="e" placeholder="One non-language lesson where I can explicitly teach reading for learning..."></textarea></div>
+
+<div class="sec">3. MY CLASSROOM COMMITMENT</div>
+<div class="card"><b>One comprehension routine I will start / strengthen:</b><textarea id="commit"></textarea></div>
+<div class="card"><b>One teacher practice I will stop / reduce:</b><textarea id="stop"></textarea></div>
+<div class="card"><b>One way I will increase reading for pleasure:</b><textarea id="pleasure"></textarea></div>
+</section>
+
+<section class="page">
+<header><div class="day">DAY 3 — READ &amp; UNDERSTAND</div><h1>REFLECT → THINK → EXPRESS</h1><p>From Sense to Expression • Day 3 Learning Record</p></header>
+
+<div class="sec">4. MY COMPREHENSION CHAIN</div>
+<div class="card">
+<p style="text-align:center;font-weight:bold;font-size:13pt">PREDICT → CONNECT → QUESTION → INFER → INTERPRET → SUMMARISE → RESPOND</p>
+<textarea id="chain" placeholder="Explain how these processes help a child construct meaning from a text."></textarea>
+</div>
+
+<div class="sec">5. WHAT I WILL LOOK FOR IN CHILDREN</div>
+<div class="card">
+<label class="check"><input type="checkbox" id="l1">Can make a sensible prediction and explain it.</label>
+<label class="check"><input type="checkbox" id="l2">Can connect ideas in a text with prior knowledge or experience.</label>
+<label class="check"><input type="checkbox" id="l3">Can ask relevant questions about a text.</label>
+<label class="check"><input type="checkbox" id="l4">Can infer meaning using textual clues and prior knowledge.</label>
+<label class="check"><input type="checkbox" id="l5">Can identify key ideas and important details.</label>
+<label class="check"><input type="checkbox" id="l6">Can summarise or retell in their own words.</label>
+<label class="check"><input type="checkbox" id="l7">Can discuss and justify a response using evidence.</label>
+<label class="check"><input type="checkbox" id="l8">Can transfer reading strategies to other subjects.</label>
+</div>
+
+<div class="sec">6. LISTENING • SPEAKING • READING • WRITING</div>
+<div class="card">
+<div class="prompt"><b>How will I connect these four modes in my classroom?</b></div>
+<textarea id="fourModes" style="min-height:38mm"></textarea>
+</div>
+
+<div class="sec">7. FINAL REFLECTION</div>
+<div class="card big"><div class="prompt"><b>The most important insight I am taking from Day 3 is...</b></div><textarea id="insight"></textarea></div>
+<div class="card"><div class="prompt"><b>What support / resource do I need to strengthen comprehension and meaning-making?</b></div><textarea id="support"></textarea></div>
+
+<div class="buttons">
+<button class="p" onclick="saveForm()">Save on This Device</button>
+<button class="s" onclick="downloadResponses()">Download Responses</button>
+<button class="s" onclick="window.print()">Print / Save as PDF</button>
+<button class="d" onclick="clearForm()">Clear Form</button>
+</div>
+<div id="status" class="status"></div>
+<div class="note">Responses are saved locally in this browser when you choose “Save on This Device”. They are not automatically submitted online.</div>
+</section>
+
+
+  </div>
+  <div class="panel-actions">
+    <button type="button" class="save-btn" data-save="day3">Save on This Device</button>
+    <button type="button" class="download-btn" data-download="day3">Download Responses</button>
+    <button type="button" class="print-btn" data-print="day3">Print / Save as PDF</button>
+    <button type="button" class="clear-btn" data-clear="day3">Clear This Form</button>
+  </div>
+</section>
+
+<section class="portal-panel" id="panel-day4" data-key="day4" aria-labelledby="title-day4">
+  <div class="panel-top">
+    <div>
+      <div class="kicker">DAY 4</div>
+      <h2 id="title-day4">EXPRESS & ASSESS</h2>
+      <p class="panel-subtitle">From Meaning to Expression</p>
+    </div>
+    <button type="button" class="home-btn" data-home>← Back to Forms</button>
+  </div>
+  <div class="portal-pathway">Understand → Think → Relate → Explain</div>
+  <div class="embedded-form">
+    <section class="page">
+  <h1>DAY 4 — EXPRESS &amp; ASSESS</h1>
+  <div class="subtitle">From Meaning to Expression</div>
+
+  <div class="pathway">UNDERSTAND → THINK → RELATE → EXPLAIN</div>
+
+  <p class="intro">
+    The final day brings the strands of the <b>Sounds to Sense</b> journey together.
+    The focus moves towards <b>structured literacy, inclusive classroom practices,
+    comprehension, critical thinking, meaningful expression and assessment for learning.</b>
+  </p>
+
+  <div class="quote">
+    <b>“What if a child is not progressing? How do we identify, differentiate and support?”</b>
+  </div>
+
+  <p class="intro">
+    Teachers reflect on how assessment can move beyond identifying right and wrong answers
+    towards understanding what a child can do, where the difficulty lies, and what teaching
+    response is needed next.
+  </p>
+
+  <div class="quote">
+    Comprehension: <b>UNDERSTAND → THINK → RELATE → EXPLAIN</b>
+  </div>
+  <div class="quote">
+    NCERT textbooks as language tools: <b>TEXT → TALK → READING → MEANING → EXPRESSION</b>
+  </div>
+
+  <h3>Participant Details</h3>
+  <div class="grid2">
+    <div class="field"><label>Name</label><input name="name"></div>
+    <div class="field"><label>Designation</label><input name="designation"></div>
+    <div class="field"><label>School / KV</label><input name="school"></div>
+    <div class="field"><label>Class / Classes Taught</label><input name="classes"></div>
+    <div class="field"><label>Date</label><input type="date" name="date"></div>
+    <div class="field"><label>Group / Batch</label><input name="batch"></div>
+  </div>
+
+  <h3>My Understanding of Day 4</h3>
+  <textarea name="understanding" placeholder="What does 'From Meaning to Expression' mean to you?"></textarea>
+
+  <h3>My Key Takeaway</h3>
+  <textarea name="takeaway" placeholder="Write the one idea from Day 4 you most want to carry into your classroom."></textarea>
+
+  <div class="footer"><span>FROM SOUNDS TO SENSE — DAY 4</span><span>Page 1 of 3</span></div>
+</section>
+
+<section class="page">
+  <h1>Skills Acquired</h1>
+  <h2>What I can now understand, notice and apply</h2>
+
+  <table>
+    <tr><th>Skill Acquired</th><th>What this means in classroom practice</th><th class="rating">Confidence 1–5</th></tr>
+    <tr><td><b>Structured Literacy</b></td><td>Plan explicit, systematic and cumulative literacy instruction while connecting skills to meaningful reading and writing.</td><td><select name="r1"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td><b>Comprehension &amp; Meaning Making</b></td><td>Help children understand, think, relate ideas and explain their thinking using evidence and language.</td><td><select name="r2"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td><b>Critical Thinking</b></td><td>Use questions, comparison, reasoning, interpretation and justification rather than relying only on recall.</td><td><select name="r3"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td><b>Inclusive Literacy Practices</b></td><td>Identify barriers, differentiate support and provide multiple pathways for children to participate and demonstrate learning.</td><td><select name="r4"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td><b>Assessment for Learning</b></td><td>Use observation, questioning, learner responses and evidence to decide the next instructional step.</td><td><select name="r5"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td><b>Differentiation &amp; Targeted Support</b></td><td>Move from “the child is weak” to identifying the specific skill needing support and selecting an appropriate intervention.</td><td><select name="r6"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td><b>Meaningful Expression</b></td><td>Provide opportunities for children to explain, discuss, write, create, justify and communicate ideas.</td><td><select name="r7"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+    <tr><td><b>Textbook as a Language Resource</b></td><td>Use NCERT textbook texts as springboards for talk, vocabulary, reading, comprehension, thinking and expression—not merely completion.</td><td><select name="r8"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td></tr>
+  </table>
+
+  <div class="box">
+    <b>Confidence scale:</b> 1 = Need substantial support &nbsp; 2 = Beginning &nbsp; 3 = Developing &nbsp; 4 = Confident &nbsp; 5 = Ready to apply independently
+  </div>
+
+  <h3>Which skill needs the most strengthening?</h3>
+  <textarea name="strengthening"></textarea>
+
+  <h3>What evidence would show that this skill is developing in children?</h3>
+  <textarea name="evidence"></textarea>
+
+  <h3>My most important assessment insight</h3>
+  <textarea name="assessmentInsight"></textarea>
+
+  <div class="footer"><span>FROM SOUNDS TO SENSE — DAY 4</span><span>Page 2 of 3</span></div>
+</section>
+
+<section class="page">
+  <h1>Further Classroom Implications</h1>
+  <h2>Turning Day 4 learning into classroom action</h2>
+
+  <h3>1. When a child is not progressing…</h3>
+  <div class="box">
+    <div class="checkrow">
+      <label><input type="checkbox" name="observe"> Observe the child closely</label>
+      <label><input type="checkbox" name="identify"> Identify the specific difficulty</label>
+      <label><input type="checkbox" name="diagnose"> Check prerequisite skills</label>
+      <label><input type="checkbox" name="differentiate"> Differentiate the task/support</label>
+      <label><input type="checkbox" name="model"> Model the skill explicitly</label>
+      <label><input type="checkbox" name="practice"> Provide guided practice</label>
+      <label><input type="checkbox" name="monitor"> Monitor progress over time</label>
+      <label><input type="checkbox" name="adjust"> Adjust instruction using evidence</label>
+    </div>
+  </div>
+
+  <h3>2. Build comprehension through purposeful talk</h3>
+  <p class="small">Plan prompts that move children from understanding to thinking, relating and explaining.</p>
+  <textarea name="talkPrompts" placeholder="Write 2–3 questions/prompts you will use."></textarea>
+
+  <h3>3. Use the NCERT textbook as a language tool</h3>
+  <div class="pathway">TEXT → TALK → READING → MEANING → EXPRESSION</div>
+  <textarea name="textbookPlan" placeholder="Choose one NCERT text/chapter and describe how you will turn it into a language-rich learning experience."></textarea>
+
+  <h3>4. Inclusive Classroom Commitment</h3>
+  <textarea name="inclusiveCommitment" placeholder="What will you change so that more children can participate, understand and express?"></textarea>
+
+  <h3>5. My Assessment-for-Learning Plan</h3>
+  <table>
+    <tr><th>What will I observe?</th><th>What evidence will I collect?</th><th>What will I do next?</th></tr>
+    <tr><td><textarea name="obs1"></textarea></td><td><textarea name="ev1"></textarea></td><td><textarea name="next1"></textarea></td></tr>
+    <tr><td><textarea name="obs2"></textarea></td><td><textarea name="ev2"></textarea></td><td><textarea name="next2"></textarea></td></tr>
+  </table>
+
+  <h3>My Classroom Commitment — Starting Tomorrow</h3>
+  <textarea name="tomorrow" placeholder="One specific action I will implement in my classroom."></textarea>
+
+  <h3>Final Reflection</h3>
+  <textarea name="finalReflection" placeholder="How has the Sounds to Sense journey changed the way you think about literacy, comprehension and assessment?"></textarea>
+
+  <h3>Support / Resources I Still Need</h3>
+  <textarea name="support"></textarea>
+
+  <div class="footer"><span>FROM SOUNDS TO SENSE — DAY 4</span><span>Page 3 of 3</span></div>
+</section>
+
+
+
+
+  </div>
+  <div class="panel-actions">
+    <button type="button" class="save-btn" data-save="day4">Save on This Device</button>
+    <button type="button" class="download-btn" data-download="day4">Download Responses</button>
+    <button type="button" class="print-btn" data-print="day4">Print / Save as PDF</button>
+    <button type="button" class="clear-btn" data-clear="day4">Clear This Form</button>
+  </div>
+</section>
+
+<section class="portal-panel" id="panel-feedback" data-key="feedback" aria-labelledby="title-feedback">
+  <div class="panel-top">
+    <div>
+      <div class="kicker">WORKSHOP</div>
+      <h2 id="title-feedback">GENERAL FEEDBACK</h2>
+      <p class="panel-subtitle">Your Feedback Matters</p>
+    </div>
+    <button type="button" class="home-btn" data-home>← Back to Forms</button>
+  </div>
+  <div class="portal-pathway">Reflect → Rate → Suggest → Improve</div>
+  <div class="embedded-form">
+    <section class="page">
+<div class="header">
+<h1>GENERAL FEEDBACK FORM</h1>
+<p>Workshop Feedback &amp; Suggestions</p>
+</div>
+
+<div class="intro">
+  <div class="line-field"><label>General Feedback Provided by -</label><input id="providedBy" type="text"></div>
+  <div class="line-field"><label>From -</label><input id="from" type="text"></div>
+  <div class="line-field"><label>For the Workshop -</label><input id="workshop" type="text"></div>
+</div>
+
+<div class="section">FEEDBACK ON ARRANGEMENTS</div>
+
+<div class="question">
+<p>On a 5 point scale - how will you rate your <strong>stay arrangements</strong> (5 being the highest satisfaction level rating) -</p>
+<div class="scale">
+<label><input type="radio" name="stay" value="1">1</label>
+<label><input type="radio" name="stay" value="2">2</label>
+<label><input type="radio" name="stay" value="3">3</label>
+<label><input type="radio" name="stay" value="4">4</label>
+<label><input type="radio" name="stay" value="5">5</label>
+</div>
+<label class="suggestion-label">Is there any suggestion that you like to suggest for further improvement -</label>
+<textarea id="staySuggestion"></textarea>
+</div>
+
+<div class="question">
+<p>On a 5 point scale - how will you rate your <strong>fooding arrangements</strong> (5 being the highest rating) -</p>
+<div class="scale">
+<label><input type="radio" name="food" value="1">1</label>
+<label><input type="radio" name="food" value="2">2</label>
+<label><input type="radio" name="food" value="3">3</label>
+<label><input type="radio" name="food" value="4">4</label>
+<label><input type="radio" name="food" value="5">5</label>
+</div>
+<label class="suggestion-label">Is there any suggestion that you like to suggest for further improvement -</label>
+<textarea id="foodSuggestion"></textarea>
+</div>
+
+<div class="question">
+<p>On a 5 point scale - how will you rate your <strong>Cleanliness arrangements</strong> (5 being the highest satisfaction level rating) -</p>
+<div class="scale">
+<label><input type="radio" name="clean" value="1">1</label>
+<label><input type="radio" name="clean" value="2">2</label>
+<label><input type="radio" name="clean" value="3">3</label>
+<label><input type="radio" name="clean" value="4">4</label>
+<label><input type="radio" name="clean" value="5">5</label>
+</div>
+<label class="suggestion-label">Is there any suggestion that you like to suggest for further improvement -</label>
+<textarea id="cleanSuggestion"></textarea>
+</div>
+</section>
+
+<section class="page">
+<div class="header">
+<h1>GENERAL FEEDBACK FORM</h1>
+<p>Feedback on Support, Pace &amp; Content</p>
+</div>
+
+<div class="question">
+<p>On a 5 point scale - how will you rate your <strong>Technological Support</strong> (5 being the highest satisfaction level rating) -</p>
+<div class="scale">
+<label><input type="radio" name="tech" value="1">1</label>
+<label><input type="radio" name="tech" value="2">2</label>
+<label><input type="radio" name="tech" value="3">3</label>
+<label><input type="radio" name="tech" value="4">4</label>
+<label><input type="radio" name="tech" value="5">5</label>
+</div>
+<label class="suggestion-label">Is there any suggestion that you like to suggest for further improvement -</label>
+<textarea id="techSuggestion"></textarea>
+</div>
+
+<div class="question pace">
+<label class="suggestion-label"><strong>Pace and Content of the Course</strong> -</label>
+<textarea id="paceContent" placeholder="Please share your feedback on the pace and content of the course."></textarea>
+</div>
+
+<div class="section">GENERAL COMMENTS / SUGGESTIONS</div>
+<div class="question">
+<label class="suggestion-label">Any other feedback or suggestion for further improvement -</label>
+<textarea id="generalSuggestion" style="min-height:55mm"></textarea>
+</div>
+
+<div class="buttons">
+<button class="primary" onclick="saveForm()">Save on This Device</button>
+<button class="secondary" onclick="downloadResponses()">Download Responses</button>
+<button class="secondary" onclick="window.print()">Print / Save as PDF</button>
+<button class="danger" onclick="clearForm()">Clear Form</button>
+</div>
+<div id="status" class="status"></div>
+<div class="note">Digital entries are saved locally in this browser when you select “Save on This Device”. Nothing is automatically submitted online.</div>
+</section>
+
+
+  </div>
+  <div class="panel-actions">
+    <button type="button" class="save-btn" data-save="feedback">Save on This Device</button>
+    <button type="button" class="download-btn" data-download="feedback">Download Responses</button>
+    <button type="button" class="print-btn" data-print="feedback">Print / Save as PDF</button>
+    <button type="button" class="clear-btn" data-clear="feedback">Clear This Form</button>
+  </div>
+</section>
+
+
+  <footer>FROM SOUNDS TO SENSE • Digital Workshop Forms • All responses are stored locally in the browser unless downloaded by the participant.</footer>
+</div>
+
+<script>
+(function() {
+  const home = document.getElementById('homeView');
+  const panels = [...document.querySelectorAll('.portal-panel')];
+  const prefix = 'STS_PORTAL_2026_';
+
+  function panel(key) {
+    return document.getElementById('panel-' + key);
+  }
+  function openPanel(key) {
+    home.style.display = 'none';
+    panels.forEach(p => p.classList.toggle('active', p.dataset.key === key));
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function goHome() {
+    panels.forEach(p => p.classList.remove('active'));
+    home.style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  document.querySelectorAll('[data-open]').forEach(btn =>
+    btn.addEventListener('click', () => openPanel(btn.dataset.open))
+  );
+  document.querySelectorAll('[data-home]').forEach(btn =>
+    btn.addEventListener('click', goHome)
+  );
+
+  function fieldsFor(key) {
+    return panel(key).querySelectorAll('input, textarea, select');
+  }
+  function collect(key) {
+    const data = {};
+    fieldsFor(key).forEach((el, i) => {
+      const id = el.name || el.id || ('field_' + i);
+      if (el.type === 'checkbox' || el.type === 'radio') data[id] = el.checked;
+      else data[id] = el.value;
+    });
+    return data;
+  }
+  function restore(key) {
+    const raw = localStorage.getItem(prefix + key);
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      fieldsFor(key).forEach((el, i) => {
+        const id = el.name || el.id || ('field_' + i);
+        if (!(id in data)) return;
+        if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!data[id];
+        else el.value = data[id];
+      });
+    } catch(e) {}
+  }
+  function save(key) {
+    localStorage.setItem(prefix + key, JSON.stringify(collect(key)));
+    announce(key, 'Responses saved on this device/browser.');
+  }
+  function clear(key) {
+    if (!confirm('Clear all responses in this form?')) return;
+    fieldsFor(key).forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else el.value = '';
+    });
+    localStorage.removeItem(prefix + key);
+    announce(key, 'This form has been cleared.');
+  }
+  function announce(key, msg) {
+    let s = panel(key).querySelector('.status');
+    if (!s) {
+      s = document.createElement('div');
+      s.className = 'status';
+      panel(key).querySelector('.panel-actions').appendChild(s);
+    }
+    s.textContent = msg;
+  }
+  function download(key) {
+    const lines = [];
+    fieldsFor(key).forEach((el, i) => {
+      const id = el.name || el.id || ('field_' + i);
+      const value = (el.type === 'checkbox' || el.type === 'radio') ? (el.checked ? 'Yes' : 'No') : el.value;
+      if (value !== '') lines.push(id + ': ' + value);
+    });
+    const blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = key === 'feedback' ? 'General_Feedback_Responses.txt' : key.toUpperCase() + '_Reflection_Responses.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+    announce(key, 'Responses downloaded.');
+  }
+
+  document.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => save(b.dataset.save)));
+  document.querySelectorAll('[data-download]').forEach(b => b.addEventListener('click', () => download(b.dataset.download)));
+  document.querySelectorAll('[data-clear]').forEach(b => b.addEventListener('click', () => clear(b.dataset.clear)));
+  document.querySelectorAll('[data-print]').forEach(b => b.addEventListener('click', () => window.print()));
+
+  ['day1','day2','day3','day4','feedback'].forEach(restore);
+
+  document.getElementById('makeQR').addEventListener('click', function() {
+    const url = document.getElementById('publicUrl').value.trim();
+    const preview = document.getElementById('qrPreview');
+    const status = document.getElementById('qrStatus');
+    if (!/^https?:\/\//i.test(url)) {
+      preview.textContent = 'Enter a complete public URL beginning with https://';
+      status.textContent = 'The QR code can only be generated for a public web address.';
+      return;
+    }
+    preview.innerHTML = '';
+    const img = document.createElement('img');
+    img.alt = 'QR code for the complete Sounds to Sense digital forms portal';
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(url);
+    img.onerror = () => { preview.textContent = 'QR image could not be loaded. Check internet access.'; };
+    preview.appendChild(img);
+    status.textContent = 'QR generated for the URL entered above.';
+  });
+
+  // Allow a direct panel hash, e.g. #day4, while retaining one-file behavior.
+  const hash = location.hash.replace('#','');
+  if (['day1','day2','day3','day4','feedback'].includes(hash)) openPanel(hash);
+})();
+</script>
+</body>
+</html>
